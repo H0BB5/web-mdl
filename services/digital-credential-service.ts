@@ -1,4 +1,5 @@
 import { MDLVerificationResult } from "@/hooks/use-mdl-verification";
+import { toBase64Url } from "@/lib/utils";
 
 export interface MDLAttributes {
   family_name?: boolean;
