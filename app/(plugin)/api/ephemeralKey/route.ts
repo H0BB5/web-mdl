@@ -1,31 +1,32 @@
+import { toBase64Url } from '@/lib/utils';
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { base64UrlEncode } from '@/lib/utils';
-
-
-
-export function createEphemeralKey(): {
-  publicKey: string;
-  privateKey: string;
-} {
-  const ecdh = crypto.createECDH('prime256v1'); // P-256
-  ecdh.generateKeys();
-
-  return {
-    privateKey: base64UrlEncode(ecdh.getPrivateKey()),
-    publicKey: base64UrlEncode(ecdh.getPublicKey()) // Uncompressed (65 bytes)
-  };
-}
+import crypto from 'node:crypto';
 
 export async function POST() {
   try {
-    const keyPair = createEphemeralKey();
+    const ecdh = crypto.createECDH('prime256v1'); // P-256
+    ecdh.generateKeys();
     
-    return NextResponse.json(keyPair, { status: 200 });
+    // Get the raw private key
+    const privateKey = ecdh.getPrivateKey();
+    
+    const publicKey = ecdh.getPublicKey();
+    
+    const privateKeyBase64 = toBase64Url(privateKey);
+    const publicKeyBase64 = toBase64Url(publicKey);
+    
+    console.log("Generated ephemeral key pair:");
+    console.log("Private key length:", privateKey.length);
+    console.log("Public key length:", publicKey.length);
+    
+    return NextResponse.json({
+      privateKey: privateKeyBase64,
+      publicKey: publicKeyBase64
+    });
   } catch (error) {
     console.error('Error generating ephemeral key:', error);
     return NextResponse.json(
-      { error: 'Failed to generate ephemeral key' },
+      { error: error instanceof Error ? error.message : 'Failed to generate ephemeral key' },
       { status: 500 }
     );
   }

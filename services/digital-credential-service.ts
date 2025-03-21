@@ -1,5 +1,4 @@
 import { MDLVerificationResult } from "@/hooks/use-mdl-verification";
-import { base64UrlEncode } from "@/lib/utils";
 
 export interface MDLAttributes {
   family_name?: boolean;
@@ -91,7 +90,7 @@ export class DigitalCredentialService {
       // Generate a nonce
       const nonceBuffer = new Uint8Array(32);
       crypto.getRandomValues(nonceBuffer);
-      const nonce = base64UrlEncode(Buffer.from(nonceBuffer));
+      const nonce = toBase64Url(Buffer.from(nonceBuffer));
       // Prepare the fields for the request based on selected attributes
       const fields = Object.entries(attributes)
         .filter(([, isSelected]) => isSelected)

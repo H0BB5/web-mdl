@@ -5,12 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function base64UrlEncode(buffer: Buffer) {
-  return (
-    buffer
-      .toString('base64')
-      .replaceAll('+', '-')
-      .replaceAll('/', '_')
-      .replace(/=+$/, '')
-  );
+export function toBase64Url(buffer: Buffer): string {
+  return buffer.toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
 }
